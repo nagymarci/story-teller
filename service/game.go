@@ -1,8 +1,10 @@
 package service
 
-import "math/rand"
+import (
+	"math/rand"
+)
 
-const defaultEmojiSet = "🐒🐕🐕🦌🐘🤙🧠"
+var defaultEmojiSet = [...]string{"🐒", "🐕", "🐕", "🦌", "🐘", "🤙", "🧠", "🕵🏼‍♂️"}
 
 type Player struct {
 	name string
@@ -34,7 +36,7 @@ func generateEmojis(length int) []Emoji {
 	var emojis []Emoji
 
 	for i := 0; i < length; i++ {
-		emojis = append(emojis, Emoji{ID: i, Symbol: string(defaultEmojiSet[rand.Intn(len(defaultEmojiSet))]), IsUsed: false})
+		emojis = append(emojis, Emoji{ID: i, Symbol: defaultEmojiSet[rand.Intn(len(defaultEmojiSet))], IsUsed: false})
 	}
 
 	return emojis
