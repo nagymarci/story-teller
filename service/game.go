@@ -11,8 +11,9 @@ type Player struct {
 }
 
 type Game struct {
-	Id     string  `json:"id"`
-	Emojis []Emoji `json:"emojis"`
+	Id     string   `json:"id"`
+	Emojis []Emoji  `json:"emojis"`
+	Story  []string `json:"story"`
 }
 
 type Emoji struct {
@@ -25,11 +26,17 @@ func New(emojiCount int) *Game {
 	return &Game{
 		Id:     generateID(4),
 		Emojis: generateEmojis(emojiCount),
+		Story:  []string{},
 	}
 }
 
 func (g *Game) Use(id int) {
+	if g.Emojis[id].IsUsed {
+		return
+	}
+
 	g.Emojis[id].IsUsed = true
+	g.Story = append(g.Story, g.Emojis[id].Symbol)
 }
 
 func generateEmojis(length int) []Emoji {
