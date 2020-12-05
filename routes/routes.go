@@ -3,14 +3,16 @@ package routes
 import (
 	"net/http"
 
+	"github.com/nagymarci/story-teller/events"
 	"github.com/nagymarci/story-teller/handlers"
+	"github.com/nagymarci/story-teller/store"
 	"github.com/urfave/negroni"
 
 	"github.com/gorilla/mux"
 	"github.com/nagymarci/story-teller/controllers"
 )
 
-func Route(controller *controllers.StoryTeller) http.Handler {
+func Route(controller *controllers.StoryTeller, sub *events.InApp, s *store.Default) http.Handler {
 	router := mux.NewRouter()
 	router.Use(corsMiddleware)
 
@@ -18,6 +20,7 @@ func Route(controller *controllers.StoryTeller) http.Handler {
 	handlers.StoryTellerCreateHandler(story, controller)
 	handlers.StoryTellerGetHandler(story, controller)
 	handlers.StoryTellerUseHandler(story, controller)
+	handlers.EventsWSHandler(story, sub, s)
 
 	router.PathPrefix("/story").Handler(story)
 

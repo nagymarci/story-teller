@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/nagymarci/story-teller/controllers"
+	"github.com/nagymarci/story-teller/events"
 	"github.com/nagymarci/story-teller/model"
 	"github.com/nagymarci/story-teller/routes"
 	"github.com/nagymarci/story-teller/store"
@@ -21,9 +22,10 @@ var s *store.Default
 func TestMain(m *testing.M) {
 	rand.Seed(time.Now().UnixNano())
 	s = store.New()
-	controller := controllers.New(s)
+	sub := events.New()
+	controller := controllers.New(s, sub)
 
-	router = routes.Route(controller)
+	router = routes.Route(controller, sub, s)
 
 	res := m.Run()
 
@@ -89,14 +91,8 @@ func TestStorytellerUseHandler(t *testing.T) {
 			t.Fatalf("expected [%d], got [%d]", http.StatusOK, res.StatusCode)
 		}
 
-		var result model.Game
+		var result controllers.UseResponse
 		json.NewDecoder(res.Body).Decode(&result)
-
-		_, err := s.Load(result.Id)
-
-		if err != nil {
-			t.Fatalf("failed to read game from store [%v]", err)
-		}
 
 		if len(result.Emojis) != 2 {
 			t.Fatalf("expected 2 emoji, got [%d]", len(result.Emojis))
@@ -138,7 +134,7 @@ func TestStorytellerUseHandler(t *testing.T) {
 		result, err := s.Load(game.Id)
 
 		if err != nil {
-			t.Fatalf("failed to read game from store [%v]", err)
+			t.Fatalf("failed to read game [%s] from store [%v]", game.Id, err)
 		}
 
 		if len(result.Emojis) != 2 {

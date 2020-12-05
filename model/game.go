@@ -6,27 +6,29 @@ import (
 
 var defaultEmojiSet = [...]string{"🐒", "🐕", "🐕", "🦌", "🐘", "🤙", "🧠", "🕵🏼‍♂️"}
 
+type StoryItem string
+
 type Player struct {
 	name string
 }
 
 type Game struct {
-	Id     string   `json:"id"`
-	Emojis []Emoji  `json:"emojis"`
-	Story  []string `json:"story"`
+	Id     string      `json:"id"`
+	Emojis []*Emoji    `json:"emojis"`
+	Story  []StoryItem `json:"story"`
 }
 
 type Emoji struct {
-	ID     int    `json:"id"`
-	Symbol string `json:"symbol"`
-	IsUsed bool   `json:"isUsed"`
+	ID     int       `json:"id"`
+	Symbol StoryItem `json:"symbol"`
+	IsUsed bool      `json:"isUsed"`
 }
 
 func New(emojiCount int) *Game {
 	return &Game{
 		Id:     generateID(4),
 		Emojis: generateEmojis(emojiCount),
-		Story:  []string{},
+		Story:  []StoryItem{},
 	}
 }
 
@@ -39,11 +41,11 @@ func (g *Game) Use(id int) {
 	g.Story = append(g.Story, g.Emojis[id].Symbol)
 }
 
-func generateEmojis(length int) []Emoji {
-	var emojis []Emoji
+func generateEmojis(length int) []*Emoji {
+	var emojis []*Emoji
 
 	for i := 0; i < length; i++ {
-		emojis = append(emojis, Emoji{ID: i, Symbol: defaultEmojiSet[rand.Intn(len(defaultEmojiSet))], IsUsed: false})
+		emojis = append(emojis, &Emoji{ID: i, Symbol: StoryItem(defaultEmojiSet[rand.Intn(len(defaultEmojiSet))]), IsUsed: false})
 	}
 
 	return emojis
