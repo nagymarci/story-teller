@@ -1,30 +1,36 @@
 package controllers
 
 import (
-	"github.com/nagymarci/story-teller/service"
+	"github.com/nagymarci/story-teller/model"
+	"github.com/nagymarci/story-teller/store"
 )
 
 type StoryTeller struct {
-	store map[string]*service.Game
+	store *store.Default
 }
 
-func New() *StoryTeller {
+func New(store *store.Default) *StoryTeller {
 	return &StoryTeller{
-		store: map[string]*service.Game{},
+		store: store,
 	}
 }
 
-func (st *StoryTeller) NewGame(emojiCount int) *service.Game {
-	game := service.New(emojiCount)
-	st.store[game.Id] = game
+func (st *StoryTeller) NewGame(emojiCount int) *model.Game {
+	game := model.New(emojiCount)
+	st.store.Save(game.Id, game)
 	return game
 }
 
-func (st *StoryTeller) Use(gameID string, emojiID int) *service.Game {
-	st.store[gameID].Use(emojiID)
-	return st.store[gameID]
+func (st *StoryTeller) Use(gameID string, emojiID int) (*model.Game, error) {
+	game, err := st.store.Load(gameID)
+	if err != nil {
+		return game, err
+	}
+	game.Use(emojiID)
+	st.store.Save(gameID, game)
+	return game, nil
 }
 
-func (st *StoryTeller) Get(gameID string) *service.Game {
-	return st.store[gameID]
+func (st *StoryTeller) Get(gameID string) (*model.Game, error) {
+	return st.store.Load(gameID)
 }

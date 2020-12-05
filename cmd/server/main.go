@@ -10,12 +10,14 @@ import (
 
 	"github.com/nagymarci/story-teller/controllers"
 	"github.com/nagymarci/story-teller/routes"
+	"github.com/nagymarci/story-teller/store"
 )
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
-	c := controllers.New()
+	s := store.New()
+	c := controllers.New(s)
 
 	router := routes.Route(c)
 
