@@ -5,8 +5,8 @@ import (
 )
 
 type UseResponse struct {
-	Emojis []*model.Emoji
-	Story  []model.StoryItem
+	Emojis []*model.Emoji    `json:"emojis"`
+	Story  []model.StoryItem `json:"story"`
 }
 
 func NewUseResponse(g *model.Game) *UseResponse {
