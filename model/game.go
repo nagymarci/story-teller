@@ -4,7 +4,7 @@ import (
 	"math/rand"
 )
 
-var defaultEmojiSet = [...]string{"🐒", "🐕", "🐕", "🦌", "🐘", "🤙", "🧠", "🕵🏼‍♂️"}
+var defaultEmojiSet = [...]StoryItem{"🐒", "🐕", "🦌", "🐘", "🤙", "🧠", "🕵🏼‍♂️", "🦦", "🌻"}
 
 type StoryItem string
 
@@ -45,7 +45,11 @@ func generateEmojis(length int) []*Emoji {
 	var emojis []*Emoji
 
 	for i := 0; i < length; i++ {
-		emojis = append(emojis, &Emoji{ID: i, Symbol: StoryItem(defaultEmojiSet[rand.Intn(len(defaultEmojiSet))]), IsUsed: false})
+		symbol := defaultEmojiSet[rand.Intn(len(defaultEmojiSet))]
+		for contains(emojis, symbol) && length <= len(defaultEmojiSet) {
+			symbol = defaultEmojiSet[rand.Intn(len(defaultEmojiSet))]
+		}
+		emojis = append(emojis, &Emoji{ID: i, Symbol: symbol, IsUsed: false})
 	}
 
 	return emojis
@@ -59,4 +63,13 @@ func generateID(length int) string {
 		b[i] = idCharset[rand.Intn(len(idCharset))]
 	}
 	return string(b)
+}
+
+func contains(array []*Emoji, item StoryItem) bool {
+	for _, elem := range array {
+		if elem.Symbol == item {
+			return true
+		}
+	}
+	return false
 }
