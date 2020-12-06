@@ -20,6 +20,7 @@ var router http.Handler
 var s *store.Default
 
 func TestMain(m *testing.M) {
+	os.Setenv("EMOJI_COUNT", "2")
 	rand.Seed(time.Now().UnixNano())
 	s = store.New()
 	sub := events.New()

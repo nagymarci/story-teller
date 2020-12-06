@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -12,7 +13,7 @@ import (
 
 func StoryTellerCreateHandler(router *mux.Router, storyTeller *controllers.StoryTeller) {
 	router.HandleFunc("", func(w http.ResponseWriter, r *http.Request) {
-		result := storyTeller.NewGame(2)
+		result := storyTeller.NewGame(emojiCount())
 
 		w.Header().Set("content-type", "application/json")
 		w.WriteHeader(http.StatusCreated)
@@ -66,4 +67,13 @@ func StoryTellerGetHandler(router *mux.Router, storyTeller *controllers.StoryTel
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(result)
 	})
+}
+
+func emojiCount() int {
+	env := os.Getenv("EMOJI_COUNT")
+	emojiCount, err := strconv.Atoi(env)
+	if env == "" || err != nil {
+		return 9
+	}
+	return emojiCount
 }
